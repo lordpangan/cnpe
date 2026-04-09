@@ -1,0 +1,9 @@
+# Trigger binding is what calls the trigger template and pass the parameters to it. It is like a glue between the event and the trigger template.
+apiVersion: triggers.tekton.dev/v1beta1
+kind: TriggerBinding
+metadata:
+  name: hello-binding
+spec: 
+  params:
+  - name: username
+    value: $(body.username)

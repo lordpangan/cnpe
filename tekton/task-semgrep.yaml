@@ -1,0 +1,36 @@
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: semgrep
+  labels:
+    app.kubernetes.io/version: "0.1"
+  annotations:
+    tekton.dev/categories: Security
+    tekton.dev/tags: sast, security, semgrep
+    tekton.dev/displayName: "Run Semgrep SAST against a source workspace"
+spec:
+  description: >-
+    Runs Semgrep static analysis against the source workspace and fails the
+    task on any finding. No SEMGREP_APP_TOKEN required — uses public rulesets.
+  params:
+    - name: CONFIG
+      description: >-
+        Semgrep config selector. `auto` lets Semgrep pick rulesets based on
+        the detected languages. Override with registry refs like `p/java`
+        or `p/owasp-top-ten` for stricter study runs.
+      default: "auto"
+    - name: SEMGREP_IMAGE
+      description: Semgrep scanner image. Pinned by digest for reproducibility.
+      default: docker.io/semgrep/semgrep:latest@sha256:a3d49dc967b8534a6a76628e50c51cbfe33eb7195dc2feab1fdc0f100852c8ef
+  workspaces:
+    - name: source
+      description: The cloned source repository to scan.
+  steps:
+    - name: scan
+      image: $(params.SEMGREP_IMAGE)
+      workingDir: $(workspaces.source.path)
+      # `semgrep scan --error` exits non-zero on findings so the pipeline fails.
+      # Using `scan` (not `ci`) to avoid requiring SEMGREP_APP_TOKEN / Semgrep Cloud.
+      script: |
+        set -euo pipefail
+        semgrep scan --config=$(params.CONFIG) --error --metrics=off .

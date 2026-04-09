@@ -1,0 +1,35 @@
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: maven-test
+  labels:
+    app.kubernetes.io/version: "0.1"
+  annotations:
+    tekton.dev/categories: Build Tools
+    tekton.dev/tags: maven, java, test
+    tekton.dev/displayName: "Run Maven goals against a source workspace"
+spec:
+  description: >-
+    Runs Maven against the source workspace. Defaults to `mvn test` so the
+    pipeline can fail fast on unit test failures. The GOALS param makes this
+    reusable for `verify`, `package`, etc.
+  params:
+    - name: GOALS
+      description: Maven goals to execute.
+      type: array
+      default: ["test"]
+    - name: MAVEN_IMAGE
+      description: Maven builder image. Pinned by digest for reproducibility.
+      # Matches the build stage of tkn-demo-app1/Dockerfile.
+      default: docker.io/library/maven:3.9.6-eclipse-temurin-21@sha256:8d63d4c1902cb12d9e79a70671b18ebe26358cb592561af33ca1808f00d935cb
+  workspaces:
+    - name: source
+      description: The cloned source repository (contains pom.xml).
+  steps:
+    - name: mvn
+      image: $(params.MAVEN_IMAGE)
+      workingDir: $(workspaces.source.path)
+      # -B (batch mode) suppresses the download-progress spam so logs stay readable.
+      command: ["mvn", "-B"]
+      args:
+        - $(params.GOALS)

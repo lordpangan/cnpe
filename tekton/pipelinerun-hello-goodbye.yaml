@@ -1,0 +1,11 @@
+# the resource PipelineRun is what actually instanciate the pipeline and runs it.
+apiVersion: tekton.dev/v1
+kind: PipelineRun
+metadata:
+  name: hello-goodbye-run
+spec:
+  pipelineRef:
+    name: hello-goodbye
+  params:
+  - name: username
+    value: "Tekton"

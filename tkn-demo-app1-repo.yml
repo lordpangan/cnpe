@@ -1,0 +1,7 @@
+apiVersion: pipelinesascode.tekton.dev/v1alpha1                                                                                                                                      
+kind: Repository
+metadata:
+  name: tkn-demo-app1                                                                                                                                                                  
+  namespace: pipelines-as-code
+spec:                                                                                                                                                                                  
+  url: "https://github.com/lordpangan/tkn-demo-app1" 

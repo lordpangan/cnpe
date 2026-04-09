@@ -1,0 +1,317 @@
+{
+  "lockfile_version": "1",
+  "packages": {
+    "cosign@latest": {
+      "last_modified": "2026-03-21T07:29:51Z",
+      "resolved": "github:NixOS/nixpkgs/09061f748ee21f68a089cd5d91ec1859cd93d0be#cosign",
+      "source": "devbox-search",
+      "version": "3.0.5",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/h6agpnp5h4k2vg2mzdh85gr2jg708vg1-cosign-3.0.5",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/h6agpnp5h4k2vg2mzdh85gr2jg708vg1-cosign-3.0.5"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/pz3z65y42dv26gladyyqimdqcfarsa8y-cosign-3.0.5",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/pz3z65y42dv26gladyyqimdqcfarsa8y-cosign-3.0.5"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/8znfj2wf5lgp36waf39c4n39y3mswyqy-cosign-3.0.5",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/8znfj2wf5lgp36waf39c4n39y3mswyqy-cosign-3.0.5"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/5fs3r1s68y53pmi53hizak5ik9pkvgxc-cosign-3.0.5",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/5fs3r1s68y53pmi53hizak5ik9pkvgxc-cosign-3.0.5"
+        }
+      }
+    },
+    "github:NixOS/nixpkgs/nixpkgs-unstable": {
+      "last_modified": "2026-03-23T13:48:00Z",
+      "resolved": "github:NixOS/nixpkgs/fdc7b8f7b30fdbedec91b71ed82f36e1637483ed?lastModified=1774273680&narHash=sha256-a%2B%2BtZ1RQsDb1I0NHrFwdGuRlR5TORvCEUksM459wKUA%3D"
+    },
+    "jq@latest": {
+      "last_modified": "2026-03-21T07:29:51Z",
+      "resolved": "github:NixOS/nixpkgs/09061f748ee21f68a089cd5d91ec1859cd93d0be#jq",
+      "source": "devbox-search",
+      "version": "1.8.1",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "bin",
+              "path": "/nix/store/bb450vb2gl547zwba8sihcyilsg2rqfa-jq-1.8.1-bin",
+              "default": true
+            },
+            {
+              "name": "man",
+              "path": "/nix/store/vs96fwfhd5gjycxs5yc58wkrizscww92-jq-1.8.1-man",
+              "default": true
+            },
+            {
+              "name": "dev",
+              "path": "/nix/store/irxgyhi0rq34f2y721a26ii09nynq2ha-jq-1.8.1-dev"
+            },
+            {
+              "name": "doc",
+              "path": "/nix/store/rnkk37licxmcicz44sm368bk2fsrk52j-jq-1.8.1-doc"
+            },
+            {
+              "name": "out",
+              "path": "/nix/store/y4gq3lbz2nq75cl3v28ixrqrr90pk4lf-jq-1.8.1"
+            }
+          ],
+          "store_path": "/nix/store/bb450vb2gl547zwba8sihcyilsg2rqfa-jq-1.8.1-bin"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "bin",
+              "path": "/nix/store/h68aklwk28xbrg7pqaw078w1hvvvf419-jq-1.8.1-bin",
+              "default": true
+            },
+            {
+              "name": "man",
+              "path": "/nix/store/l4npc0sgk51lz2d6jqnl4r18hmn6qckr-jq-1.8.1-man",
+              "default": true
+            },
+            {
+              "name": "dev",
+              "path": "/nix/store/kzsszlf69lndqilpgysw1j9b4hrfwjfx-jq-1.8.1-dev"
+            },
+            {
+              "name": "doc",
+              "path": "/nix/store/rr0a4brsd47393640zn9zgw844rbkrsl-jq-1.8.1-doc"
+            },
+            {
+              "name": "out",
+              "path": "/nix/store/5jf55qkwrnd769ri9wxiy7z9kp5zb4ca-jq-1.8.1"
+            }
+          ],
+          "store_path": "/nix/store/h68aklwk28xbrg7pqaw078w1hvvvf419-jq-1.8.1-bin"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "bin",
+              "path": "/nix/store/y699jyfkqhj7lm51zdxm1df28izg6zgj-jq-1.8.1-bin",
+              "default": true
+            },
+            {
+              "name": "man",
+              "path": "/nix/store/0h261wdn6mlrn564adwhyw52a2dfnbg5-jq-1.8.1-man",
+              "default": true
+            },
+            {
+              "name": "doc",
+              "path": "/nix/store/2bvvha8apma6crzhsnpjrghnjbjj6hpm-jq-1.8.1-doc"
+            },
+            {
+              "name": "out",
+              "path": "/nix/store/44i56yshwqwgw912idz0m9zx30d1xg8z-jq-1.8.1"
+            },
+            {
+              "name": "dev",
+              "path": "/nix/store/681w0vijzacwyhcwylkvbppd4kps33fw-jq-1.8.1-dev"
+            }
+          ],
+          "store_path": "/nix/store/y699jyfkqhj7lm51zdxm1df28izg6zgj-jq-1.8.1-bin"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "bin",
+              "path": "/nix/store/fc13hvlj7541i1xmwdka7f61qicdzr5a-jq-1.8.1-bin",
+              "default": true
+            },
+            {
+              "name": "man",
+              "path": "/nix/store/crwv17pim6csnfr4jmsd7kf60sp3c5dh-jq-1.8.1-man",
+              "default": true
+            },
+            {
+              "name": "dev",
+              "path": "/nix/store/plinh1rzkh83n4gfpkxl748zgaydpxll-jq-1.8.1-dev"
+            },
+            {
+              "name": "doc",
+              "path": "/nix/store/ihgrvb9w91mwbhxx3fi3gcwwx3qlsdfv-jq-1.8.1-doc"
+            },
+            {
+              "name": "out",
+              "path": "/nix/store/s4w1j16dj8wyriv1ljfypr9s1r39yjwp-jq-1.8.1"
+            }
+          ],
+          "store_path": "/nix/store/fc13hvlj7541i1xmwdka7f61qicdzr5a-jq-1.8.1-bin"
+        }
+      }
+    },
+    "maven@latest": {
+      "last_modified": "2026-03-21T07:29:51Z",
+      "resolved": "github:NixOS/nixpkgs/09061f748ee21f68a089cd5d91ec1859cd93d0be#maven",
+      "source": "devbox-search",
+      "version": "3.9.12",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/nbhcgw5kp0h7jaqv98vvb45hym7xdgj3-maven-3.9.12",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/nbhcgw5kp0h7jaqv98vvb45hym7xdgj3-maven-3.9.12"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/lmcgw4rpnr2kzp5nd9j1bbjc7yz374jv-maven-3.9.12",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/lmcgw4rpnr2kzp5nd9j1bbjc7yz374jv-maven-3.9.12"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/k5vpjrhbfrh2ic6zjby7q08f3c7dlag1-maven-3.9.12",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/k5vpjrhbfrh2ic6zjby7q08f3c7dlag1-maven-3.9.12"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/1x1df5ycx2ijh96vf8003mafa5jh74ig-maven-3.9.12",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/1x1df5ycx2ijh96vf8003mafa5jh74ig-maven-3.9.12"
+        }
+      }
+    },
+    "tektoncd-cli-pac@0.41.1": {
+      "last_modified": "2026-03-21T07:29:51Z",
+      "resolved": "github:NixOS/nixpkgs/09061f748ee21f68a089cd5d91ec1859cd93d0be#tektoncd-cli-pac",
+      "source": "devbox-search",
+      "version": "0.41.1",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/lv2f40qq3wi1jy8kc5zivbd3hjci9rpx-tektoncd-cli-pac-0.41.1",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/lv2f40qq3wi1jy8kc5zivbd3hjci9rpx-tektoncd-cli-pac-0.41.1"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/7hakjwryagx7fy9i3n47d461ilqaf9gv-tektoncd-cli-pac-0.41.1",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/7hakjwryagx7fy9i3n47d461ilqaf9gv-tektoncd-cli-pac-0.41.1"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/yzgqrz4cqzprxdjicmlql1jzik9hp4a2-tektoncd-cli-pac-0.41.1",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/yzgqrz4cqzprxdjicmlql1jzik9hp4a2-tektoncd-cli-pac-0.41.1"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/g25pj2imq3cv2yvqrg8fphqqkd72j9h7-tektoncd-cli-pac-0.41.1",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/g25pj2imq3cv2yvqrg8fphqqkd72j9h7-tektoncd-cli-pac-0.41.1"
+        }
+      }
+    },
+    "tektoncd-cli@0.44.0": {
+      "last_modified": "2026-03-21T07:29:51Z",
+      "resolved": "github:NixOS/nixpkgs/09061f748ee21f68a089cd5d91ec1859cd93d0be#tektoncd-cli",
+      "source": "devbox-search",
+      "version": "0.44.0",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/krkqma1lzgnikmlb7i2p7b5in22bnasj-tektoncd-cli-0.44.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/krkqma1lzgnikmlb7i2p7b5in22bnasj-tektoncd-cli-0.44.0"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/5n0hxqhhhrblifda90d7wyq2c0dcwjhx-tektoncd-cli-0.44.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/5n0hxqhhhrblifda90d7wyq2c0dcwjhx-tektoncd-cli-0.44.0"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/g1fqy7ypmwk5ywpbxnjinrz1kbg30fs1-tektoncd-cli-0.44.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/g1fqy7ypmwk5ywpbxnjinrz1kbg30fs1-tektoncd-cli-0.44.0"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/pq56cxinw5089lzd5p0f3hrdsrngri52-tektoncd-cli-0.44.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/pq56cxinw5089lzd5p0f3hrdsrngri52-tektoncd-cli-0.44.0"
+        }
+      }
+    }
+  }
+}

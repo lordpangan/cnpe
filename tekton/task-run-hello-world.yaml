@@ -1,0 +1,8 @@
+# the resource TaskRun is what actually instanciate the tasks and runs it.
+apiVersion: tekton.dev/v1
+kind: TaskRun
+metadata:
+  name: hello-task-run
+spec:
+  taskRef:
+    name: hello
