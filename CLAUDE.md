@@ -191,6 +191,44 @@ This creates a `Repository` CR in the cluster and scaffolds `.tekton/pipelinerun
 | "Hook is invalid" / "Url must be a valid URL" | GitHub can't reach the webhook URL | Ensure port-forward is running and tunnel is active |
 | `pipelines-as-code-secret` missing after bootstrap | Bootstrap failed before GitHub sent back credentials | Fix the URL/connectivity, re-run bootstrap |
 
+### Tekton — PAC Troubleshooting Runbook
+
+**Symptom:** PAC pipeline not triggering on push to a PAC-enabled repo. `tkn pr list` shows no PipelineRuns.
+
+#### 1. Repository CR in the wrong namespace
+
+`tkn pac create repository` prompts for a namespace. If the wrong namespace is entered, PAC never matches incoming webhook events to the repo.
+
+**Diagnose:** `kubectl get repository -A` — confirm the Repository CR exists in the namespace where PAC expects to run pipelines (for this cluster: `pipelines-as-code`).
+
+**Fix:** Delete the misplaced CR and re-create it in the correct namespace:
+
+```bash
+kubectl delete repository <name> -n <wrong-namespace>
+tkn pac create repository   # enter the correct namespace this time
+```
+
+#### 2. Task resolution failure — custom Tasks not found
+
+PAC matched the repo and created a PipelineRun, but it fails because Tasks like `maven-test` can't be resolved. **PAC does not use Tasks pre-applied to the namespace via `kubectl apply`.** It resolves Tasks through:
+
+- **Hub catalog** — automatic for well-known tasks (e.g., `git-clone`)
+- **Remote URL annotations** — `pipelinesascode.tekton.dev/task-N` pointing to raw YAML
+- **Co-located YAML** — Task files committed inside the `.tekton/` directory
+
+**Diagnose:** `tkn pr describe --last` — look for `TaskRun ... failed` with a "could not find task" message.
+
+**Fix:** Add remote task annotations to the PipelineRun in `.tekton/pipelinerun.yaml`:
+
+```yaml
+annotations:
+  pipelinesascode.tekton.dev/task-1: "https://raw.githubusercontent.com/lordpangan/cnpe/main/tekton/task-maven-test.yaml"
+  pipelinesascode.tekton.dev/task-2: "https://raw.githubusercontent.com/lordpangan/cnpe/main/tekton/task-semgrep.yaml"
+  pipelinesascode.tekton.dev/task-3: "https://raw.githubusercontent.com/lordpangan/cnpe/main/tekton/task-kaniko.yaml"
+```
+
+**Why this matters for the exam:** PAC's task resolution model is intentionally isolated — each PipelineRun is self-describing. This means `kubectl apply -f task.yaml` into the namespace is not enough; PAC needs to be told where to fetch custom Tasks. This is a deliberate design choice: PipelineRuns committed to `.tekton/` should be reproducible from Git alone, without depending on pre-existing cluster state.
+
 ### Tekton — `tkn-demo-app1` CI Pipeline
 
 The `tkn-demo-app1` repo is wired to PAC and runs a full CI chain on every push/PR to `main`. Pipeline shape:
@@ -247,11 +285,6 @@ kubectl apply -n pipelines-as-code \
 - **Don't abstract prematurely** — this is a learning repo. Explicitness over DRY; repetition is fine if it aids understanding.
 - **Don't mix domain concerns across directories** — keep each tool's manifests self-contained.
 
-## Communication Style
-
-- **Skip preamble and pleasantries** — no "Great question!", "Sure!", or restating what was asked. Lead with the answer.
-- **Always explain the reasoning** — for every suggestion or config choice, state *why* it works that way. The goal is exam understanding, not just a working artifact.
-- **Concise but not shallow** — one crisp sentence of reasoning beats a paragraph of filler. If the "why" needs depth (e.g., how Chains signs a TaskRun vs PipelineRun), give it; just don't pad it.
 
 ## Notes
 

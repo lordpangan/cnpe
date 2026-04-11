@@ -1,0 +1,78 @@
+apiVersion: tekton.dev/v1
+kind: Pipeline
+metadata:
+  name: java-ci
+spec:
+  params:
+    - name: repo_url
+    - name: revision
+    - name: image-reference
+  workspaces:
+    - name: source
+    - name: basic-auth
+  tasks:
+    - name: fetch-repository
+      taskRef:
+        name: git-clone
+      workspaces:
+        - name: output
+          workspace: source
+        - name: basic-auth
+          workspace: basic-auth
+      params:
+        - name: url
+          value: $(params.repo_url)
+        - name: revision
+          value: $(params.revision)
+
+    # Linting — Spotless / Google Java Format. Reuses the maven-test Task
+    # with a different GOALS value. Runs first because format drift is the
+    # cheapest failure to produce and the cheapest to fix locally
+    # (`mvn spotless:apply`).
+    - name: lint
+      runAfter: [fetch-repository]
+      taskRef:
+        name: maven-test
+      workspaces:
+        - name: source
+          workspace: source
+      params:
+        - name: GOALS
+          value: ["spotless:check"]
+
+    # Domain 1 (GitOps & CD) — run unit tests before any image work so
+    # test failures fail the pipeline cheaply, independent of the build.
+    - name: unit-test
+      runAfter: [lint]
+      taskRef:
+        name: maven-test
+      workspaces:
+        - name: source
+          workspace: source
+
+    # Domain 5 (Security & Policy) — static analysis on the source tree.
+    # Runs after tests so an obviously broken build fails first.
+    - name: sast
+      runAfter: [unit-test]
+      taskRef:
+        name: semgrep
+      workspaces:
+        - name: source
+          workspace: source
+
+    # Domain 1 — build multi-stage image via Kaniko and push to the
+    # in-cluster registry. --insecure because kind-registry:5000 is HTTP.
+    # IMAGE_URL + IMAGE_DIGEST results are picked up by Tekton Chains
+    # cluster-wide config for automatic SLSA provenance + signing.
+    - name: image-build
+      runAfter: [sast]
+      taskRef:
+        name: kaniko
+      workspaces:
+        - name: source
+          workspace: source
+      params:
+        - name: IMAGE
+          value: $(params.image-reference)
+        - name: EXTRA_ARGS
+          value: ["--insecure", "--ignore-path=/product_uuid"]
