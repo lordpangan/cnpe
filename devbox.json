@@ -5,7 +5,8 @@
     "cosign@latest",
     "jq@latest",
     "tektoncd-cli-pac@0.41.1",
-    "maven@latest"
+    "maven@latest",
+    "gh@latest"
   ],
   "shell": {
     "init_hook": [
