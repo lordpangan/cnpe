@@ -76,3 +76,5 @@ spec:
           value: $(params.image-reference)
         - name: EXTRA_ARGS
           value: ["--insecure", "--ignore-path=/product_uuid"]
+        - name: BUILDER_IMAGE
+          value: gcr.io/kaniko-project/executor:v1.24.0@sha256:4e7a52dd1f14872430652bb3b027405b8dfd17c4538751c620ac005741ef9698
