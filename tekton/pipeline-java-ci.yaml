@@ -10,6 +10,7 @@ spec:
   workspaces:
     - name: source
     - name: basic-auth
+    - name: maven-settings
   tasks:
     - name: fetch-repository
       taskRef:
@@ -25,30 +26,39 @@ spec:
         - name: revision
           value: $(params.revision)
 
-    # Linting — Spotless / Google Java Format. Reuses the maven-test Task
+    # Linting — Spotless / Google Java Format. Reuses the maven Task
     # with a different GOALS value. Runs first because format drift is the
     # cheapest failure to produce and the cheapest to fix locally
     # (`mvn spotless:apply`).
     - name: lint
       runAfter: [fetch-repository]
       taskRef:
-        name: maven-test
+        name: maven
       workspaces:
         - name: source
           workspace: source
+        - name: maven-settings
+          workspace: maven-settings
       params:
         - name: GOALS
           value: ["spotless:check"]
+        - name: MAVEN_IMAGE
+          value: docker.io/library/maven:3.9.6-eclipse-temurin-21@sha256:8d63d4c1902cb12d9e79a70671b18ebe26358cb592561af33ca1808f00d935cb
 
     # Domain 1 (GitOps & CD) — run unit tests before any image work so
     # test failures fail the pipeline cheaply, independent of the build.
     - name: unit-test
       runAfter: [lint]
       taskRef:
-        name: maven-test
+        name: maven
       workspaces:
         - name: source
           workspace: source
+        - name: maven-settings
+          workspace: maven-settings
+      params:
+        - name: MAVEN_IMAGE
+          value: docker.io/library/maven:3.9.6-eclipse-temurin-21@sha256:8d63d4c1902cb12d9e79a70671b18ebe26358cb592561af33ca1808f00d935cb
 
     # Domain 5 (Security & Policy) — static analysis on the source tree.
     # Runs after tests so an obviously broken build fails first.
