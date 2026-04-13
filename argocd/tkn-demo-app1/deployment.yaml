@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: tkn-demo-app1
-          image: kind-registry:5000/tkn-demo-app1:latest
+          image: kind-registry:5000/tkn-demo-app1:d551f6dbfcc7f578ba858ca2ef0e3a7d8f745a9f
           ports:
             - containerPort: 8080
           resources:
