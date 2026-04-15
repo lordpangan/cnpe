@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: tkn-demo-app1
+  name: app1
   labels:
-    app: tkn-demo-app1
+    app: app1
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: tkn-demo-app1
+      app: app1
   template:
     metadata:
       labels:
-        app: tkn-demo-app1
+        app: app1
     spec:
       containers:
-        - name: tkn-demo-app1
+        - name: app1
           image: kind-registry:5000/tkn-demo-app1:d551f6dbfcc7f578ba858ca2ef0e3a7d8f745a9f
           ports:
             - containerPort: 8080
