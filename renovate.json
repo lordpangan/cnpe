@@ -1,0 +1,25 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "docker": {
+    "fileMatch": ["argocd/.+/overlays/dev/kustomization\\.yaml$"]
+  },
+  "packageRules": [
+    {
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["kind-registry:5000/tkn-demo-app1"],
+      "registryUrls": ["http://kind-registry:5000"],
+      "groupName": "app images (dev)",
+      "automerge": false
+    }
+  ],
+  "regexManagers": [
+    {
+      "fileMatch": ["argocd/.+/overlays/dev/kustomization\\.yaml$"],
+      "matchStrings": ["newTag: (?<currentValue>[a-f0-9]+)"],
+      "depNameTemplate": "kind-registry:5000/tkn-demo-app1",
+      "datasourceTemplate": "docker",
+      "versioningTemplate": "loose"
+    }
+  ]
+}
