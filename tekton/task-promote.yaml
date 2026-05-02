@@ -1,0 +1,129 @@
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: promote
+  namespace: pipelines-as-code
+spec:
+  description: |
+    Promotes an app from one environment to the next by copying the source overlay
+    to the target overlay, opening a PR, and superseding any stale promotion PRs.
+    Branch name is shared between steps via a file in the workspace.
+  params:
+    - name: APP_NAME
+      type: string
+      description: App name (e.g., app1)
+    - name: SOURCE_ENV
+      type: string
+      description: Source environment (e.g., dev)
+    - name: TARGET_ENV
+      type: string
+      description: Target environment (e.g., uat)
+    - name: REPO
+      type: string
+      default: lordpangan/cnpe
+      description: GitHub owner/repo
+  workspaces:
+    - name: source
+      description: Git repo checkout
+  steps:
+    - name: promote-and-push
+      # alpine/git:2.43.0 — pin digest before production use: crane digest alpine/git:2.43.0
+      image: alpine/git:2.43.0
+      env:
+        - name: GITHUB_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: github-token
+              key: token
+      script: |
+        #!/bin/sh
+        set -e
+
+        APP="$(params.APP_NAME)"
+        SOURCE="$(params.SOURCE_ENV)"
+        TARGET="$(params.TARGET_ENV)"
+        REPO="$(params.REPO)"
+        BRANCH="promote/${APP}-${SOURCE}-to-${TARGET}-$(date +%s)"
+        TARGET_PATH="argocd/${APP}/overlays/${TARGET}/kustomization.yaml"
+        SOURCE_PATH="argocd/${APP}/overlays/${SOURCE}/kustomization.yaml"
+
+        cd $(workspaces.source.path)
+
+        # Save branch name for next step
+        echo "${BRANCH}" > /workspace/branch-name
+
+        # Configure git for push with token
+        git config user.email "tekton@pipeline.local"
+        git config user.name "Tekton Promotion Pipeline"
+        git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${REPO}.git"
+
+        # Create promotion branch
+        git checkout -b "${BRANCH}"
+
+        # Copy source overlay to target, replacing namespace
+        cp "${SOURCE_PATH}" "${TARGET_PATH}"
+        sed -i "s/namespace: ${SOURCE}/namespace: ${TARGET}/" "${TARGET_PATH}"
+
+        # Update env-specific values (APP_ENV)
+        sed -i "s/value: ${SOURCE}/value: ${TARGET}/" "${TARGET_PATH}"
+
+        # Update LOG_LEVEL based on target env
+        case "${TARGET}" in
+          dev) sed -i 's/value: \(info\|warn\)/value: debug/' "${TARGET_PATH}" ;;
+          uat) sed -i 's/value: \(debug\|warn\)/value: info/' "${TARGET_PATH}" ;;
+          prd) sed -i 's/value: \(debug\|info\)/value: warn/' "${TARGET_PATH}" ;;
+        esac
+
+        # Commit and push
+        git add "${TARGET_PATH}"
+        git commit -m "promote(${APP}): ${SOURCE} -> ${TARGET}"
+        git push origin "${BRANCH}"
+
+        echo "Pushed branch: ${BRANCH}"
+
+    - name: supersede-and-open-pr
+      # ghcr.io/cli/cli:2.49.0 — pin digest before production use: crane digest ghcr.io/cli/cli:2.49.0
+      image: ghcr.io/cli/cli:2.49.0
+      env:
+        - name: GITHUB_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: github-token
+              key: token
+      script: |
+        #!/bin/sh
+        set -e
+
+        APP="$(params.APP_NAME)"
+        SOURCE="$(params.SOURCE_ENV)"
+        TARGET="$(params.TARGET_ENV)"
+        REPO="$(params.REPO)"
+        LABEL="promote:${APP}:${TARGET}"
+
+        # Read branch name from previous step
+        BRANCH=$(cat /workspace/branch-name)
+        echo "Using branch: ${BRANCH}"
+
+        # Close any existing open promotion PRs for the same app+target
+        EXISTING=$(gh pr list --repo "${REPO}" --state open --label "${LABEL}" --json number -q '.[].number')
+        for PR_NUM in ${EXISTING}; do
+          echo "Superseding PR #${PR_NUM}"
+          gh pr close "${PR_NUM}" --repo "${REPO}" --comment "Superseded by newer promotion"
+          gh pr edit "${PR_NUM}" --repo "${REPO}" --add-label "superseded"
+        done
+
+        # Open new PR
+        gh pr create \
+          --repo "${REPO}" \
+          --base main \
+          --head "${BRANCH}" \
+          --title "promote(${APP}): ${SOURCE} -> ${TARGET}" \
+          --body "## Promotion
+        - **App:** ${APP}
+        - **From:** ${SOURCE}
+        - **To:** ${TARGET}
+
+        Automated by Tekton promotion pipeline. Approve to deploy." \
+          --label "${LABEL}"
+
+        echo "PR created. Awaiting approval."
