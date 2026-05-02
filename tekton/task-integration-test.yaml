@@ -1,0 +1,40 @@
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: integration-test
+  namespace: pipelines-as-code
+spec:
+  description: |
+    Runs a basic health check against an app's Service in the specified namespace.
+    Retries up to 5 times with 10s backoff to handle pod startup.
+  params:
+    - name: APP_NAME
+      type: string
+      description: Name of the app (matches the Service name)
+    - name: NAMESPACE
+      type: string
+      description: Namespace to test against (dev, uat, prd)
+    - name: PORT
+      type: string
+      default: "80"
+      description: Service port to curl
+  steps:
+    - name: health-check
+      image: curlimages/curl:8.7.1@sha256:73e4d532ea62d7e2b1ca7272903ec264b6c69daee44d6ae3846be9598e268e49
+      script: |
+        #!/bin/sh
+        set -e
+        SERVICE_URL="http://$(params.APP_NAME).$(params.NAMESPACE).svc.cluster.local:$(params.PORT)"
+        echo "Testing: ${SERVICE_URL}"
+        RETRIES=5
+        for i in $(seq 1 $RETRIES); do
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" "${SERVICE_URL}" || echo "000")
+          if [ "$STATUS" = "200" ]; then
+            echo "PASS: ${SERVICE_URL} returned 200"
+            exit 0
+          fi
+          echo "Attempt $i/$RETRIES: got $STATUS, retrying in 10s..."
+          sleep 10
+        done
+        echo "FAIL: ${SERVICE_URL} did not return 200 after $RETRIES attempts"
+        exit 1
