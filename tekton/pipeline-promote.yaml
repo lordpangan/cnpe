@@ -1,0 +1,66 @@
+apiVersion: tekton.dev/v1
+kind: Pipeline
+metadata:
+  name: promote
+  namespace: pipelines-as-code
+spec:
+  description: |
+    Runs integration tests against the source environment. If they pass,
+    opens a PR to promote the app to the target environment.
+  params:
+    - name: APP_NAME
+      type: string
+      description: App to promote (e.g., app1)
+    - name: SOURCE_ENV
+      type: string
+      description: Source environment to test (e.g., dev)
+    - name: TARGET_ENV
+      type: string
+      description: Target environment to promote to (e.g., uat)
+    - name: REPO
+      type: string
+      default: lordpangan/cnpe
+  workspaces:
+    - name: shared-workspace
+      description: Workspace for git clone
+  tasks:
+    - name: test
+      taskRef:
+        name: integration-test
+      params:
+        - name: APP_NAME
+          value: $(params.APP_NAME)
+        - name: NAMESPACE
+          value: $(params.SOURCE_ENV)
+
+    - name: clone
+      runAfter:
+        - test
+      taskRef:
+        name: git-clone
+      params:
+        - name: url
+          value: https://github.com/$(params.REPO).git
+        - name: revision
+          value: main
+      workspaces:
+        - name: output
+          workspace: shared-workspace
+
+    - name: promote
+      runAfter:
+        - clone
+      taskRef:
+        name: promote
+      params:
+        - name: APP_NAME
+          value: $(params.APP_NAME)
+        - name: SOURCE_ENV
+          value: $(params.SOURCE_ENV)
+        - name: TARGET_ENV
+          value: $(params.TARGET_ENV)
+        - name: REPO
+          value: $(params.REPO)
+      workspaces:
+        - name: source
+          workspace: shared-workspace
