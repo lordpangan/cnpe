@@ -1,0 +1,24 @@
+apiVersion: tekton.dev/v1
+kind: PipelineRun
+metadata:
+  generateName: promote-app1-dev-to-uat-
+  namespace: pipelines-as-code
+spec:
+  pipelineRef:
+    name: promote
+  params:
+    - name: APP_NAME
+      value: app1
+    - name: SOURCE_ENV
+      value: dev
+    - name: TARGET_ENV
+      value: uat
+  workspaces:
+    - name: shared-workspace
+      volumeClaimTemplate:
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 100Mi
